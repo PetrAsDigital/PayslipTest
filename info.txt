@@ -1,0 +1,2 @@
+I used C# Winforms application because I wanted to use a UI where the user could choose the csv input file.
+
