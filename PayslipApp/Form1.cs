@@ -1,9 +1,11 @@
-﻿using PayslipLib;
+﻿using Ninject;
+using PayslipLib;
 using ReaderLib;
-using ReaderLib.Classes;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace PayslipApp
@@ -18,8 +20,8 @@ namespace PayslipApp
         private string _fileName;
         private string[] _fileContent;
 
-        private IReader reader = new CsvReader();
-        private IPayCalc payCalc = new PayCalc_2017();
+        public IReader reader { get { return NinjectBindings.kernel.Get<IReader>(); } }
+        public IPayCalc payCalc { get { return NinjectBindings.kernel.Get<IPayCalc>(); } }
 
 
         private void buttonInput_Click(object sender, EventArgs e)
@@ -28,7 +30,7 @@ namespace PayslipApp
             {
                 DefaultExt = "csv",
                 Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*",
-                InitialDirectory = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), @"..\..\InputFiles")
+                InitialDirectory = Application.ExecutablePath
             };
 
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -51,39 +53,57 @@ namespace PayslipApp
                     MessageBox.Show($"General exception: {ex.Message}");
                 }
             }
+
+            MessageBox.Show("File uploaded successfully");
         }
 
         private void buttonOutput_Click(object sender, EventArgs e)
         {
+            if (!CheckAll())
+                return;
+
+            var allPersons = reader.ReadAllPersons(_fileContent);
+            allPersons = payCalc.ProcessAllPersons(allPersons);
+
+            SaveToFile(allPersons);
+        }
+
+        private bool CheckAll()
+        {
             if (string.IsNullOrEmpty(_fileName))
             {
                 MessageBox.Show("First choose an input csv file...");
-                return;
+                return false;
             }
 
             if (!_fileContent.Any())
             {
                 MessageBox.Show($"Selected file {_fileName} is empty...");
-                return;
+                return false;
             }
 
-            var allPersons = reader.ReadAllPersons(_fileContent);
+            return true;
+        }
 
-            if (allPersons == null || allPersons.Count < 1)
-                MessageBox.Show("No content to process");
+        private void SaveToFile(List<IPerson> allPersons)
+        {
+            var csv = new StringBuilder();
+            csv.AppendLine("Name,Pay period,Gross income,Income tax,Net income,Super");
+            allPersons.Select(a => csv.AppendLine($"{a.FirstName} {a.LastName},{string.Format("{0:dd MMM}", a.PaymentStartDate)} - {string.Format("{0:dd MMM}", a.PaymentEndDate)},{a.GrossIncome},{a.IncomeTax},{a.NetIncome},{a.Super}")).ToList();
 
-            allPersons = payCalc.ProcessAllPersons(allPersons);
+            var dialog = new SaveFileDialog()
+            {
+                FileName = "Output.csv",
+                DefaultExt = "csv",
+                Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*",
+                InitialDirectory = Application.ExecutablePath
+            };
 
-            if (allPersons == null)
-                return;
-
-            //var dialog = new SaveFileDialog()
-            //{
-            //    DefaultExt = "csv",
-            //    Filter = "csv files (*.csv)|All files (*.*)|*.*",
-            //    InitialDirectory = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), @"InputFiles")
-            //};
-
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllText(dialog.FileName, csv.ToString());
+                MessageBox.Show($"File {Path.GetFileName(dialog.FileName)} has been saved");
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace PayslipApp
         [STAThread]
         static void Main()
         {
+            NinjectBindings.InitNinject();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

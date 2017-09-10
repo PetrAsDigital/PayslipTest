@@ -8,7 +8,7 @@ namespace PayslipLib
 {
     public class PayCalc_2017: IPayCalc
     {
-        ITaxTable taxTable = new TaxTable2017();
+        ITaxTable taxTable = new TaxTable_2017();
 
         public List<IPerson> ProcessAllPersons(List<IPerson> allPersons)
         {
@@ -26,11 +26,6 @@ namespace PayslipLib
             }
 
             return allPersons;
-        }
-
-        public ITaxTable GetTaxTable()
-        {
-            return new TaxTable2017();
         }
 
         private int GetPayPeriod(IPerson person)
@@ -70,7 +65,7 @@ namespace PayslipLib
         private double GetSuper(IPerson person)
         {
             CheckTaxTable();
-            return Math.Floor(person.GrossIncome * taxTable.Super / 100);
+            return Math.Floor(person.GrossIncome * person.SuperRate / 100);
         }
 
         private void CheckTaxTable()

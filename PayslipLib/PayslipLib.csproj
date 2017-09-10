@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\TaxTable2017.cs" />
+    <Compile Include="Classes\TaxTable_2017.cs" />
     <Compile Include="Classes\TaxTableItem.cs" />
     <Compile Include="Interfaces\IPayCalc.cs" />
     <Compile Include="Interfaces\IPerson.cs" />

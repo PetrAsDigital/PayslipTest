@@ -1,2 +1,23 @@
-I used C# Winforms application because I wanted to use a UI where the user could choose the csv input file.
+I used C# Winforms application because I wanted to use a simple UI where a user could choose the csv input and output file.
+
+Solution description:
+interfaces IReader and IPayCalc are injected from an injector
+
+Assumptions:
+- the employee is at work the whole month
+- the employee doesn't take holidays, days off etc. which would affect the calculations
+
+To run the application pls. run the PayslipApp project and let your intuition do the rest.
+
+Encountered problems:
+The test description is not clear in some aspects... 
+1)
+In one place it says: "Notes: All calculation results should be rounded to the whole dollar. If >= 50 cents round up to the next dollar increment, otherwise round down."
+...but in a lot of places it also says "round down" or "round up"
+
+2)
+Payment start date and payment end date are not clear enough either, e.g. the input file should be as follows according to the task description:
+Input(first name, last name, annual salary, super rate (%), payment start date):
+David, Rudd, 60050, 9%, 01 March - 31 March
+... this means that 01 March - 31 March is payment start date
 

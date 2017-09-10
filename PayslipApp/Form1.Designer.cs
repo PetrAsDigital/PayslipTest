@@ -57,9 +57,9 @@
             // 
             this.buttonOutput.Location = new System.Drawing.Point(100, 101);
             this.buttonOutput.Name = "buttonOutput";
-            this.buttonOutput.Size = new System.Drawing.Size(133, 23);
+            this.buttonOutput.Size = new System.Drawing.Size(131, 23);
             this.buttonOutput.TabIndex = 2;
-            this.buttonOutput.Text = "Save output CSV file";
+            this.buttonOutput.Text = "Calculate And Save";
             this.buttonOutput.UseVisualStyleBackColor = true;
             this.buttonOutput.Click += new System.EventHandler(this.buttonOutput_Click);
             // 
